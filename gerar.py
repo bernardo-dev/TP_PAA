@@ -2,6 +2,9 @@ import random
 import os
 
 def gerar_instancias():
+    # Semente fixa para garantir repetibilidade dos dados em diferentes computadores
+    random.seed(42)
+
     # Definições de "Pequeno", "Médio", "Grande"
     opcoes_quantidade_item = {'P': 10, 'M': 25, 'G': 50}
     # n=50 é um tamanho razoável para B&B/Backtracking exponencial. 

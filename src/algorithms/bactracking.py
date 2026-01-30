@@ -31,7 +31,7 @@ def ler_arquivo(caminho_arquivo):
 
 def backtracking_solver(itens, capacidade_w, capacidade_v, n):
     """
-    Função recursiva de Backtracking para Mochila com 2 restrições.
+    Função recursiva de Backtracking
     Retorna: (melhor_valor, lista_de_itens_escolhidos)
     """
     # Caso base: sem itens ou capacidades esgotadas
@@ -40,7 +40,7 @@ def backtracking_solver(itens, capacidade_w, capacidade_v, n):
 
     item_atual = itens[n-1]
 
-    # restrição: item não cabe (por peso OU volume)
+    # restrição: item não cabe (por peso ou volume)
     if item_atual.peso > capacidade_w or item_atual.volume > capacidade_v:
         return backtracking_solver(itens, capacidade_w, capacidade_v, n-1)
 
@@ -76,7 +76,6 @@ def salvar_resultado(arquivo_saida, num_itens, W, V, lucro, tempo, itens_escolhi
         
         writer.writerow([num_itens, W, V, lucro, tempo, str(itens_escolhidos)])
 
-# --- Execução Principal ---
 def main():
     arquivo_entrada = 'teste_grande.txt'
     arquivo_resultados = 'resultados_backtracking.csv'
@@ -89,14 +88,14 @@ def main():
     # Início da medição de tempo
     inicio = time.time()
     
-    # Chama o Backtracking
-    # Nota: passamos len(itens) como índice inicial (de trás para frente)
+    # Backtracking
+    # len(itens) como índice inicial (de trás para frente)
     lucro_max, itens_escolhidos = backtracking_solver(itens, W_max, V_max, len(itens))
     
     fim = time.time()
     tempo_execucao = fim - inicio
     
-    # Exibe Saída no Console conforme pedido [cite: 8]
+    # Exibe resultados
     print(f"Lucro Máximo: {lucro_max}")
     print(f"Itens escolhidos (IDs): {sorted(itens_escolhidos)}")
     print(f"Tempo de execução: {tempo_execucao:.6f} segundos")

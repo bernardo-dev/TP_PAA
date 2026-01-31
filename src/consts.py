@@ -1,6 +1,6 @@
-SOLUTIONS_DP = 'solutions/dp/'
-SOLUTIONS_BB = 'solutions/bb/'
-
+SOLUTIONS_DP = 'solutions/dp/exp'
+SOLUTIONS_BB = 'solutions/bb/exp'
+SOLUTIONS_DP = 'solutions/dp/exp'
 INSTANCE_BASE_PATH = 'gerador_instancias/instancias'
 
 #Algorithm Types

@@ -6,9 +6,9 @@ import consts as c
 import numpy as np
 import time
 
-def execute(instance):
+def execute(instance, exp_number):
     W, V, items = ut.read_instance(instance)
-    
+
     start_time = time.time()
     dp_table = dynamic_programming(W, V, items)
     end_time = time.time()
@@ -21,7 +21,7 @@ def execute(instance):
     selected_items = items_selected(dp_table, items, W, V)
 
     ut.salvar_resultado(
-        c.SOLUTIONS_DP + f'{W}_{V}_{len(items)}.csv',
+        c.SOLUTIONS_DP + f'{exp_number}/{W}_{V}_{len(items)}.csv',
         len(items),
         W,
         V,
@@ -33,16 +33,15 @@ def execute(instance):
     return solution
 
 def dynamic_programming(W, V, items):
-    
     n = len(items)
     dp = np.zeros((n + 1, W + 1, V + 1), dtype=int)
 
     for i in range(1, n + 1):
         for w in range(1, W + 1):
             for v in range(1, V + 1):
-                wi, vi, vol_i = items[i - 1]
-                if wi <= w and vol_i <= v:
-                    dp[i][w][v] = max(dp[i - 1][w][v], dp[i - 1][w - wi][v - vol_i] + vi)
+                wi, vi, val_i = items[i - 1]
+                if wi <= w and vi <= v:
+                    dp[i][w][v] = max(dp[i - 1][w][v], dp[i - 1][w - wi][v - vi] + val_i)
                 else:
                     dp[i][w][v] = dp[i - 1][w][v]
 
@@ -56,9 +55,9 @@ def items_selected(dp, items, W, V):
     for i in range(n, 0, -1):
         if dp[i][w][v] != dp[i - 1][w][v]:
             selected_items.append(i - 1)  
-            wi, vi, vol_i = items[i - 1]
+            wi, vi, val_i = items[i - 1]
             w -= wi
-            v -= vol_i
+            v -= vi
 
     selected_items.reverse()  
     return selected_items

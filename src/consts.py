@@ -1,4 +1,4 @@
-SOLUTIONS_DP = 'solutions/dp/'
+SOLUTIONS_DP = 'solutions/dp/exp'
 
 INSTANCE_BASE_PATH = 'gerador_instancias/instancias'
 

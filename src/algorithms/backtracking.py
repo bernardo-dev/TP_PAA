@@ -1,6 +1,7 @@
 import time
 import csv
 import os
+import glob
 
 class Item:
     def __init__(self, id, peso, volume, valor):
@@ -77,32 +78,44 @@ def salvar_resultado(arquivo_saida, num_itens, W, V, lucro, tempo, itens_escolhi
         writer.writerow([num_itens, W, V, lucro, tempo, str(itens_escolhidos)])
 
 def main():
-    arquivo_entrada = 'teste_grande.txt'
+    diretorio_instancias = '/home/elisaveloso/instancias_tp'
     arquivo_resultados = 'resultados_backtracking.csv'
     
-    print(f"--- Processando {arquivo_entrada} ---")
-    W_max, V_max, itens = ler_arquivo(arquivo_entrada)
+    # Obtém todos os arquivos .txt no diretório
+    arquivos = sorted(glob.glob(os.path.join(diretorio_instancias, '*.txt')))
     
-    if W_max is None: return
+    if not arquivos:
+        print(f"Nenhum arquivo encontrado em {diretorio_instancias}")
+        return
+    
+    print(f"Encontrados {len(arquivos)} arquivos para processar\n")
+    
+    for arquivo_entrada in arquivos:
+        print(f"--- Processando {os.path.basename(arquivo_entrada)} ---")
+        W_max, V_max, itens = ler_arquivo(arquivo_entrada)
+        
+        if W_max is None:
+            print(f"Erro ao processar {arquivo_entrada}, pulando...\n")
+            continue
 
-    # Início da medição de tempo
-    inicio = time.time()
-    
-    # Backtracking
-    # len(itens) como índice inicial (de trás para frente)
-    lucro_max, itens_escolhidos = backtracking_solver(itens, W_max, V_max, len(itens))
-    
-    fim = time.time()
-    tempo_execucao = fim - inicio
-    
-    # Exibe resultados
-    print(f"Lucro Máximo: {lucro_max}")
-    print(f"Itens escolhidos (IDs): {sorted(itens_escolhidos)}")
-    print(f"Tempo de execução: {tempo_execucao:.6f} segundos")
-    
-    # Salva para o relatório
-    salvar_resultado(arquivo_resultados, len(itens), W_max, V_max, lucro_max, tempo_execucao, sorted(itens_escolhidos))
-    print(f"Dados salvos em '{arquivo_resultados}' para análise futura.")
+        # Início da medição de tempo
+        inicio = time.time()
+        
+        # Backtracking
+        # len(itens) como índice inicial (de trás para frente)
+        lucro_max, itens_escolhidos = backtracking_solver(itens, W_max, V_max, len(itens))
+        
+        fim = time.time()
+        tempo_execucao = fim - inicio
+        
+        # Exibe resultados
+        print(f"Lucro Máximo: {lucro_max}")
+        print(f"Itens escolhidos (IDs): {sorted(itens_escolhidos)}")
+        print(f"Tempo de execução: {tempo_execucao:.6f} segundos")
+        
+        # Salva para o relatório
+        salvar_resultado(arquivo_resultados, len(itens), W_max, V_max, lucro_max, tempo_execucao, sorted(itens_escolhidos))
+        print(f"Dados salvos em '{arquivo_resultados}'\n")
 
 if __name__ == "__main__":
     main()

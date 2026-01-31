@@ -1,6 +1,5 @@
 # Ignorar pasta instancias
 instancias/
-solutions/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

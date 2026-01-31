@@ -42,9 +42,7 @@ def dynamic_programming(W, V, items):
                 wi, vi, val_i = items[i - 1]
                 if wi <= w and vi <= v:
                     dp[i][w][v] = max(dp[i - 1][w][v], dp[i - 1][w - wi][v - vi] + val_i)
-                    #print(f"dp[{i}][{w}][{v}] updated to {dp[i][w][v]} by including item {i-1}")
                 else:
-                    #print(f"dp[{i}][{w}][{v}] remains {dp[i - 1][w][v]} (item {i-1} too heavy or voluminous)")
                     dp[i][w][v] = dp[i - 1][w][v]
 
     return dp 

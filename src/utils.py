@@ -3,24 +3,22 @@ from consts import LOG_DIR
 import consts as c
 import pandas as pd
 
-def read_instance(instance):
-    base_path = EXPERIMENT_1_DIR if experiment == 1 else EXPERIMENT_2_DIR
-    file_path = os.path.join(base_path, f'{instance}.txt')
+def read_instance(instance_path):
+    if not os.path.exists(instance_path):
+        raise FileNotFoundError(f"Arquivo {instance_path} não encontrado")
 
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Arquivo {file_path} não encontrado")
-
-    with open(file_path, 'r') as file:
+    with open(instance_path, 'r') as file:
         lines = file.readlines()
 
-    backpack_weight = int(lines[0].strip())
+    backpack_weight, backpack_volume = map(int, lines[0].strip().split('\t'))
     itens = []
 
     for line in lines[1:]:
-        weight, value = map(int, line.strip().split())
-        itens.append([weight, value])
+        weight, volume, value = map(int, line.strip().split('\t'))
+        itens.append([weight, volume, value])
 
     return backpack_weight, backpack_volume, itens
+
 
 def save_logs(experiment, instance, algorithm, log_type, log, write_mode='a'):
     if experiment not in [1, 2] or not (1 <= instance <= 20):

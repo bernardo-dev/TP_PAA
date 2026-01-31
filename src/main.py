@@ -29,6 +29,6 @@ def run_experiment(experiment_number):
    
 
 if __name__ == "__main__":
-    run_experiment(1)
+    #run_experiment(1)
     run_experiment(2)
-    run_experiment(3)  # Altere o número para 2 ou 3 para outros experimentos
+    run_experiment(3) 

@@ -1,0 +1,34 @@
+Este trabalho prático consiste na avaliação empírica de três programas para resolver o 
+problema da mochila 0-1 sem repetição com duas restrições. 
+Mochila 0-1: Maximar o valor transportado em uma mochila que suporta W quilos e V litros, 
+tendo disponíveis n itens e cada item i tem valor vi, peso wi e volume li.
+Deve-se ter uma implementação baseada em programação dinâmica, outra em 
+backtracking e a última em branch-and-bound.
+
+A entrada dos programas deve ser feita por meio da leitura de um arquivo texto com a 
+primeira linha contendo o valor W e o V, e as demais contendo cada uma o peso, o volume 
+e o valor de um item separados por tabulação. 
+
+Exemplo:
+10  9       <- Peso máximo e volume máximo suportado pela mochila
+6   3   10  <- Peso Volume Valor
+3   4   14
+4   2   16
+2   5   9
+
+A saída deve informar o lucro máximo obtido juntamente com os itens que foram 
+colocados na mochila, além do tempo de execução.
+
+Cada grupo deverá implementar e avaliar o tempo de execução das implementações. Para 
+isso, em cada combinação (quantidade de itens e peso e volume suportados pela mochila) 
+deve-se gerar 10 instâncias e rodar as três implementações sobre essas instâncias.
+Gere diversas combinações de quantidade de itens e peso e volume suportados pela mochila, 
+de tal forma que seja possível entender o comportamento assintótico de cada algoritmo à
+medida que o tamanho da instância de entrada cresce.
+
+Sobre os resultados obtidos, faça:
+Testes estatísticos para verificar se houve empate estatístico em cada combinação
+(quantidade de itens e peso e volume suportados pela mochila)
+Gráficos para visualizar o crescimento do tempo de execução em função da quantidade de 
+itens e peso e volume suportados pela mochila.
+Análises sobre os resultados e descobertas realizadas

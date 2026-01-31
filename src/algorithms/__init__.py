@@ -1,0 +1,1 @@
+# Arquivo __init__.py para tornar algorithms um módulo Python

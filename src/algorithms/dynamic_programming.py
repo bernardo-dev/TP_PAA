@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import utils as ut
 import consts as c
 import numpy as np
@@ -7,16 +10,25 @@ def execute(instance):
     W, V, items = ut.read_instance(instance)
     
     start_time = time.time()
-    solution = dynamic_programming(W, V, items)
+    dp_table = dynamic_programming(W, V, items)
     end_time = time.time()
     execution_time = end_time - start_time
-    print(f"Execution time: {execution_time:.6f} seconds")
+    print(f"\t\tExecution time: {execution_time:.6f} seconds")
 
-    log_tuple = (W, len(items), execution_time)
+    solution = dp_table[len(items)][W][V]
+    print(f"\t\tMaximum value achievable: {solution}")
+    
+    selected_items = items_selected(dp_table, items, W, V)
 
-    # ut.save_logs(instance, c.DYNAMIC_PROGRAMMING, c.EXECUTION_TIME, log_tuple)
-    # ut.save_logs(instance, c.DYNAMIC_PROGRAMMING, c.SOLUTION_VALUE, solution)
-    # ut.save_logs(instance, c.DYNAMIC_PROGRAMMING, c.LAST_INSTANCE_EXECUTED, instance, 'w')
+    ut.salvar_resultado(
+        c.SOLUTIONS_DP + f'{W}_{V}_{len(items)}.csv',
+        len(items),
+        W,
+        V,
+        solution,
+        execution_time,
+        [selected_items] 
+    )
 
     return solution
 
@@ -34,4 +46,19 @@ def dynamic_programming(W, V, items):
                 else:
                     dp[i][w][v] = dp[i - 1][w][v]
 
-    return dp[n][W][V]
+    return dp 
+
+def items_selected(dp, items, W, V):
+    n = len(items)
+    w, v = W, V
+    selected_items = []
+
+    for i in range(n, 0, -1):
+        if dp[i][w][v] != dp[i - 1][w][v]:
+            selected_items.append(i - 1)  
+            wi, vi, vol_i = items[i - 1]
+            w -= wi
+            v -= vol_i
+
+    selected_items.reverse()  
+    return selected_items

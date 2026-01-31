@@ -1,6 +1,39 @@
 import random
 import os
 
+
+def get_experiment_data(experiment_number, combination):
+    """
+    Retorna os dados W, V e n baseado no experimento e combinação.
+    
+    Args:
+        experiment_number: Número do experimento (1, 2 ou 3)
+        combination: Número da combinação (1, 2 ou 3)
+    
+    Returns:
+        Tupla contendo (W, V, n)
+    """
+    data = {
+        1: {
+            1: (200, 200, 100),
+            2: (200, 200, 1000),
+            3: (200, 200, 10000),
+        },
+        2: {
+            1: (100, 100, 1000),
+            2: (250, 100, 1000),
+            3: (500, 100, 1000),
+        },
+        3: {
+            1: (100, 100, 1000),
+            2: (100, 250, 1000),
+            3: (100, 500, 1000),
+        },
+    }
+    
+    W, V, n = data[experiment_number][combination]
+    return W, V, n
+
 def gerar_instancias():
     # Semente fixa para garantir repetibilidade dos dados em diferentes computadores
     random.seed(42)
@@ -21,14 +54,15 @@ def gerar_instancias():
     
     # EXPERIMENTO 1 - Alterando a quantidade de itens
     print("Experimento 1: Alterando quantidade de itens...")
-    peso_mochila = 200
-    volume_mochila = 200
-    quantidades = [100, 1000, 10000]
+    exp1_dir = os.path.join(OUTPUT_DIR, "experimento_1")
+    os.makedirs(exp1_dir, exist_ok=True)
     
-    for quantidade in quantidades:
+    for combinacao_idx in range(1, 4):
+        peso_mochila, volume_mochila, quantidade = get_experiment_data(1, combinacao_idx)
+        
         for i in range(1, 11):
-            filename = f"exp1_qnt-{quantidade}_W-{peso_mochila}_V-{volume_mochila}_{i}.txt"
-            filepath = os.path.join(OUTPUT_DIR, filename)
+            filename = f"combinacao{combinacao_idx}_{i}.txt"
+            filepath = os.path.join(exp1_dir, filename)
             
             with open(filepath, 'w') as f:
                 f.write(f"{peso_mochila}\t{volume_mochila}\n")
@@ -43,14 +77,15 @@ def gerar_instancias():
     
     # EXPERIMENTO 2 - Alterando o peso da mochila
     print("Experimento 2: Alterando peso da mochila...")
-    volume_mochila = 100
-    quantidade = 1000
-    pesos = [100, 250, 500]
+    exp2_dir = os.path.join(OUTPUT_DIR, "experimento_2")
+    os.makedirs(exp2_dir, exist_ok=True)
     
-    for peso_mochila in pesos:
+    for combinacao_idx in range(1, 4):
+        peso_mochila, volume_mochila, quantidade = get_experiment_data(2, combinacao_idx)
+        
         for i in range(1, 11):
-            filename = f"exp2_qnt-{quantidade}_W-{peso_mochila}_V-{volume_mochila}_{i}.txt"
-            filepath = os.path.join(OUTPUT_DIR, filename)
+            filename = f"combinacao{combinacao_idx}_{i}.txt"
+            filepath = os.path.join(exp2_dir, filename)
             
             with open(filepath, 'w') as f:
                 f.write(f"{peso_mochila}\t{volume_mochila}\n")
@@ -65,14 +100,15 @@ def gerar_instancias():
     
     # EXPERIMENTO 3 - Alterando o volume da mochila
     print("Experimento 3: Alterando volume da mochila...")
-    peso_mochila = 100
-    quantidade = 1000
-    volumes = [100, 250, 500]
+    exp3_dir = os.path.join(OUTPUT_DIR, "experimento_3")
+    os.makedirs(exp3_dir, exist_ok=True)
     
-    for volume_mochila in volumes:
+    for combinacao_idx in range(1, 4):
+        peso_mochila, volume_mochila, quantidade = get_experiment_data(3, combinacao_idx)
+        
         for i in range(1, 11):
-            filename = f"exp3_qnt-{quantidade}_W-{peso_mochila}_V-{volume_mochila}_{i}.txt"
-            filepath = os.path.join(OUTPUT_DIR, filename)
+            filename = f"combinacao{combinacao_idx}_{i}.txt"
+            filepath = os.path.join(exp3_dir, filename)
             
             with open(filepath, 'w') as f:
                 f.write(f"{peso_mochila}\t{volume_mochila}\n")

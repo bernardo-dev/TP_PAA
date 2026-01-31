@@ -1,4 +1,6 @@
-LOG_DIR = 'solutions/logs'
+SOLUTIONS_DP = 'solutions/dp/'
+
+INSTANCE_BASE_PATH = 'gerador_instancias/instancias'
 
 #Algorithm Types
 DYNAMIC_PROGRAMMING = 'dynamic_programming'

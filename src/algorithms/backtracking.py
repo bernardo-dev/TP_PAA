@@ -1,5 +1,4 @@
 import time
-import csv
 import os
 import glob
 
@@ -63,19 +62,6 @@ def backtracking_solver(itens, capacidade_w, capacidade_v, n):
             return val_com, itens_com + [item_atual.id]
         else:
             return val_sem, itens_sem
-
-def salvar_resultado(arquivo_saida, num_itens, W, V, lucro, tempo, itens_escolhidos):
-    """
-    Salva os dados em CSV para facilitar a geração de gráficos depois 
-    """
-    existe = os.path.isfile(arquivo_saida)
-    with open(arquivo_saida, 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        # Cria cabeçalho se o arquivo não existir
-        if not existe:
-            writer.writerow(['Num_Itens', 'Cap_Peso', 'Cap_Volume', 'Lucro_Max', 'Tempo_Exec(s)', 'Itens_Ids'])
-        
-        writer.writerow([num_itens, W, V, lucro, tempo, str(itens_escolhidos)])
 
 def main():
     diretorio_instancias = '/home/elisaveloso/instancias_tp'

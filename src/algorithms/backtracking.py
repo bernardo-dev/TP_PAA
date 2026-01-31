@@ -3,10 +3,11 @@ import time
 import os
 import glob
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import read_instance, salvar_resultado
+import utils as ut
+import consts as c
 
-def execute (instance_path):
-    W_max, V_max, itens = read_instance(instance_path)
+def execute (instance_path, exp_number):
+    W_max, V_max, itens = ut.read_instance(instance_path)
     
     if W_max is None:
         print(f"Erro ao processar {instance_path}, pulando...\n")
@@ -25,8 +26,8 @@ def execute (instance_path):
     print(f"\t\tItens escolhidos (IDs): {sorted(itens_escolhidos)}")
     print(f"\t\tTempo de execução: {tempo_execucao:.6f} segundos")
     
-    salvar_resultado(
-        'solutions/backtracking/' + os.path.basename(instance_path).replace('.txt', '_results.csv'),
+    ut.salvar_resultado(
+        c.SOLUTIONS_BT + f'{exp_number}/{W_max}_{V_max}_{len(itens)}.csv',
         len(itens),
         W_max,
         V_max,
@@ -34,34 +35,6 @@ def execute (instance_path):
         tempo_execucao,
         sorted(itens_escolhidos)
     )
-
-
-class Item:
-    def __init__(self, id, peso, volume, valor):
-        self.id = id
-        self.peso = peso
-        self.volume = volume
-        self.valor = valor
-
-def ler_arquivo(caminho_arquivo):
-    itens = []
-    try:
-        with open(caminho_arquivo, 'r') as f:
-            # Lê primeira linha
-            linha1 = f.readline().split()
-            W_max = int(linha1[0])
-            V_max = int(linha1[1])
-            
-            # Lê os itens
-            for i, linha in enumerate(f):
-                dados = linha.split()
-                if len(dados) >= 3:
-                    # Peso, Volume, Valor 
-                    itens.append(Item(i+1, int(dados[0]), int(dados[1]), int(dados[2])))
-        return W_max, V_max, itens
-    except Exception as e:
-        print(f"Erro ao ler arquivo: {e}")
-        return None, None, []
 
 def backtracking_solver(itens, capacidade_w, capacidade_v, n):
     """
@@ -99,46 +72,3 @@ def backtracking_solver(itens, capacidade_w, capacidade_v, n):
             return val_com, itens_com + [n-1]
         else:
             return val_sem, itens_sem
-
-def main():
-    diretorio_instancias = '/home/elisaveloso/instancias_tp'
-    arquivo_resultados = 'resultados_backtracking.csv'
-    
-    # Obtém todos os arquivos .txt no diretório
-    arquivos = sorted(glob.glob(os.path.join(diretorio_instancias, '*.txt')))
-    
-    if not arquivos:
-        print(f"Nenhum arquivo encontrado em {diretorio_instancias}")
-        return
-    
-    print(f"Encontrados {len(arquivos)} arquivos para processar\n")
-    
-    for arquivo_entrada in arquivos:
-        print(f"--- Processando {os.path.basename(arquivo_entrada)} ---")
-        W_max, V_max, itens = ler_arquivo(arquivo_entrada)
-        
-        if W_max is None:
-            print(f"Erro ao processar {arquivo_entrada}, pulando...\n")
-            continue
-
-        # Início da medição de tempo
-        inicio = time.time()
-        
-        # Backtracking
-        # len(itens) como índice inicial (de trás para frente)
-        lucro_max, itens_escolhidos = backtracking_solver(itens, W_max, V_max, len(itens))
-        
-        fim = time.time()
-        tempo_execucao = fim - inicio
-        
-        # Exibe resultados
-        print(f"Lucro Máximo: {lucro_max}")
-        print(f"Itens escolhidos (IDs): {sorted(itens_escolhidos)}")
-        print(f"Tempo de execução: {tempo_execucao:.6f} segundos")
-        
-        # Salva para o relatório
-        salvar_resultado(arquivo_resultados, len(itens), W_max, V_max, lucro_max, tempo_execucao, sorted(itens_escolhidos))
-        print(f"Dados salvos em '{arquivo_resultados}'\n")
-
-if __name__ == "__main__":
-    main()

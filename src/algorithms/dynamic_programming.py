@@ -16,9 +16,12 @@ def execute(instance, exp_number):
     print(f"\t\tExecution time: {execution_time:.6f} seconds")
 
     solution = dp_table[len(items)][W][V]
+    selected_items, current_weight, current_volume = items_selected(dp_table, items, W, V)
+
     print(f"\t\tMaximum value achievable: {solution}")
-    
-    selected_items = items_selected(dp_table, items, W, V)
+    print(f"\t\tWeight: {current_weight} / {W}")
+    print(f"\t\tWeight: {current_volume} / {V}")
+    print(f"\t\tSelected items (IDs): {sorted(selected_items)}")
 
     ut.salvar_resultado(
         c.SOLUTIONS_DP + f'{exp_number}/{W}_{V}_{len(items)}.csv',
@@ -60,4 +63,4 @@ def items_selected(dp, items, W, V):
             v -= vi
 
     selected_items.reverse()  
-    return selected_items
+    return selected_items, W - w, V - v

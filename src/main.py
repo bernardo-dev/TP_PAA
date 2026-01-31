@@ -8,22 +8,24 @@ from .algorithms import branch_and_bound as bb
 from consts import INSTANCE_BASE_PATH
 
 def dynamic_programming_experiment(experiment_number, combination, instance):
-    print("\t\033[94mExecutando experimento de programação dinâmica...\033[0m")
+    print("\t\033[94mExecutando experimento de programação dinâmica...")
 
     instance_path = f'{INSTANCE_BASE_PATH}/experimento_{experiment_number}/combinacao{combination}_{instance}.txt'
     dp.execute(instance_path, experiment_number)
 
 def branch_and_bound_experiment(experiment_number, combination, instance):
-    print("\t\033[95mExecutando experimento de branch and bound...\033[0m")
+    print("\t\033[95mExecutando experimento de branch and bound...")
 
     instance_path = f'{INSTANCE_BASE_PATH}/experimento_{experiment_number}/combinacao{combination}_{instance}.txt'
     bb.execute(instance_path, experiment_number)
 
 def backtracking_experiment(experiment_number, combination, instance):
-    print("\t\033[33mExecutando experimento de backtracking...\033[0m")
+    print("\t\033[33mExecutando experimento de backtracking...")
     
     instance_path = f'{INSTANCE_BASE_PATH}/experimento_{experiment_number}/combinacao{combination}_{instance}.txt'
     bt.execute(instance_path, experiment_number)
+    print("\033[0m")
+
 
 def run_experiment(experiment_number):
     print("-----------------------------------")

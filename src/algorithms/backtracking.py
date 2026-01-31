@@ -13,18 +13,23 @@ def execute (instance_path, exp_number):
         print(f"Erro ao processar {instance_path}, pulando...\n")
         return
 
-    print(f"\tCapacidade W: {W_max}, Capacidade V: {V_max}, Número de Itens: {len(itens)}")
+    #print(f"\tCapacidade W: {W_max}, Capacidade V: {V_max}, Número de Itens: {len(itens)}")
 
     inicio = time.time()
     
-    lucro_max, itens_escolhidos = backtracking_solver(itens, W_max, V_max, len(itens))
+    lucro_max, itens_escolhidos, capacidade_v, capacidade_w = backtracking_solver(itens, W_max, V_max, len(itens))
     
+    current_weight = W_max - capacidade_w
+    current_volume = V_max - capacidade_v
+
     fim = time.time()
     tempo_execucao = fim - inicio
 
-    print(f"\t\tLucro Máximo: {lucro_max}")
-    print(f"\t\tItens escolhidos (IDs): {sorted(itens_escolhidos)}")
-    print(f"\t\tTempo de execução: {tempo_execucao:.6f} segundos")
+    print(f"\t\tExecution time: {tempo_execucao:.6f} seconds")
+    print(f"\t\tMaximum value achievable: {lucro_max}")
+    print(f"\t\tWeight: {current_weight} / {W_max}")
+    print(f"\t\tWeight: {current_volume} / {V_max}")
+    print(f"\t\tSelected items (IDs): {sorted(itens_escolhidos)}")
     
     ut.salvar_resultado(
         c.SOLUTIONS_BT + f'{exp_number}/{W_max}_{V_max}_{len(itens)}.csv',
@@ -46,7 +51,7 @@ def backtracking_solver(itens, capacidade_w, capacidade_v, n):
     """
     # Caso base: sem itens ou capacidades esgotadas
     if n == 0 or (capacidade_w == 0 and capacidade_v == 0):
-        return 0, []
+        return 0, [], capacidade_v, capacidade_w
 
     item_atual = itens[n-1]
 
@@ -56,7 +61,7 @@ def backtracking_solver(itens, capacidade_w, capacidade_v, n):
 
     else:
         # Incluir o item (Soma valor, subtrai capacidades)
-        val_com, itens_com = backtracking_solver(
+        val_com, itens_com, capacidade_v_com, capacidade_w_com = backtracking_solver(
             itens, 
             capacidade_w - item_atual[0], 
             capacidade_v - item_atual[1], 
@@ -65,10 +70,10 @@ def backtracking_solver(itens, capacidade_w, capacidade_v, n):
         val_com += item_atual[2]
 
         # Não incluir o item
-        val_sem, itens_sem = backtracking_solver(itens, capacidade_w, capacidade_v, n-1)
+        val_sem, itens_sem, capacidade_v_sem, capacidade_w_sem  = backtracking_solver(itens, capacidade_w, capacidade_v, n-1)
 
         # Decisão: Retorna o que der maior valor
         if val_com > val_sem:
-            return val_com, itens_com + [n-1]
+            return val_com, itens_com + [n-1], capacidade_v_com, capacidade_w_com
         else:
-            return val_sem, itens_sem
+            return val_sem, itens_sem, capacidade_v_sem, capacidade_w_sem

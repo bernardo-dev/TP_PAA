@@ -10,12 +10,15 @@ def execute(instance, exp_number):
     W, V, items = ut.read_instance(instance)
 
     start_time = time.time()
-    solution, selected_items = branch_and_bound(W, V, items)
+    solution, selected_items, current_weight, current_volume = branch_and_bound(W, V, items)
     end_time = time.time()
     execution_time = end_time - start_time
     
     print(f"\t\tExecution time: {execution_time:.6f} seconds")
     print(f"\t\tMaximum value achievable: {solution}")
+    print(f"\t\tWeight: {current_weight} / {W}")
+    print(f"\t\tVolume: {current_volume} / {V}")
+    print(f"\t\tSelected items (IDs): {sorted(selected_items)}")
 
     ut.salvar_resultado(
         c.SOLUTIONS_BB + f'{exp_number}/{W}_{V}_{len(items)}.csv',
@@ -33,29 +36,33 @@ def calcular_bound(nivel, lucro, peso, volume, items, W, V):
     if peso > W or volume > V:
         return -float('inf')
 
-    bound = float(lucro)
-    peso_restante = W - peso
-    volume_restante = V - volume
+    remaining = items[nivel:]
 
-    itens_restantes = sorted(
-        items[nivel:],
-        key=lambda x: x[2] / (x[0] + x[1]) if (x[0] + x[1]) > 0 else 0,
-        reverse=True
-    )
-
-    for w_i, vol_i, val_i in itens_restantes:
-        if w_i <= peso_restante and vol_i <= volume_restante:
-            bound += val_i
-            peso_restante -= w_i
-            volume_restante -= vol_i
+    # Bound for weight only
+    bound_w = 0
+    peso_rest = W - peso
+    sorted_w = sorted(remaining, key=lambda x: x[2]/x[0] if x[0] > 0 else 0, reverse=True)
+    for w_i, _, val_i in sorted_w:
+        if w_i <= peso_rest:
+            bound_w += val_i
+            peso_rest -= w_i
         else:
-            fracao_peso = peso_restante / w_i if w_i > 0 else float('inf')
-            fracao_volume = volume_restante / vol_i if vol_i > 0 else float('inf')
-            fracao = min(fracao_peso, fracao_volume, 1.0)
-            if fracao > 0:
-                bound += fracao * val_i
+            bound_w += (peso_rest / w_i) * val_i if w_i > 0 else 0
             break
 
+    # Bound for volume only
+    bound_v = 0
+    vol_rest = V - volume
+    sorted_v = sorted(remaining, key=lambda x: x[2]/x[1] if x[1] > 0 else 0, reverse=True)
+    for _, vol_i, val_i in sorted_v:
+        if vol_i <= vol_rest:
+            bound_v += val_i
+            vol_rest -= vol_i
+        else:
+            bound_v += (vol_rest / vol_i) * val_i if vol_i > 0 else 0
+            break
+
+    bound = lucro + min(bound_w, bound_v)
     return bound
 
 def greedy_solution(items, W, V):
@@ -70,7 +77,8 @@ def greedy_solution(items, W, V):
     lucro_total = 0
     selecionados = []
 
-    for idx, (w_i, vol_i, val_i) in itens_ordenados:
+    for idx, item in itens_ordenados:
+        w_i, vol_i, val_i = item
         if peso_atual + w_i <= W and volume_atual + vol_i <= V:
             selecionados.append(idx)
             peso_atual += w_i
@@ -121,4 +129,6 @@ def branch_and_bound(W, V, items):
         if bound_sem > melhor_lucro:
             heapq.heappush(heap, (-bound_sem, nivel + 1, lucro, peso, volume, selecionados[:]))
 
-    return melhor_lucro, melhor_solucao
+    peso_total = sum(items[idx][0] for idx in melhor_solucao)
+    volume_total = sum(items[idx][1] for idx in melhor_solucao)
+    return melhor_lucro, melhor_solucao, peso_total, volume_total

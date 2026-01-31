@@ -6,18 +6,19 @@ import consts as c
 import heapq
 import time
 
-def execute(instance):
+def execute(instance, exp_number):
     W, V, items = ut.read_instance(instance)
 
     start_time = time.time()
     solution, selected_items = branch_and_bound(W, V, items)
     end_time = time.time()
     execution_time = end_time - start_time
+    
     print(f"\t\tExecution time: {execution_time:.6f} seconds")
     print(f"\t\tMaximum value achievable: {solution}")
 
     ut.salvar_resultado(
-        c.SOLUTIONS_BB + f'{W}_{V}_{len(items)}.csv',
+        c.SOLUTIONS_BB + f'{exp_number}/{W}_{V}_{len(items)}.csv',
         len(items),
         W,
         V,

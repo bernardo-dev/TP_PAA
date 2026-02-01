@@ -15,16 +15,20 @@ SOLUTIONS_DP = 'dp/exp'
 SOLUTIONS_BB = 'bb/exp'
 SOLUTIONS_BT = 'bt/exp'
 
-def plotar_graficos(experimento):
-    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Iniciando plotar_graficos: experimento={experimento}")
+def plotar_grafico_dispersao(experimento):
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Iniciando plotar_grafico_dispersao: experimento={experimento}")
 
     arquivo_saida = combina_resultados(experimento)
+    print(f"\t{COLOR_INFO}[INFO]{Style.RESET_ALL} Arquivo combinado para plotagem: {arquivo_saida}")
 
     if not os.path.exists(arquivo_saida):
         print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} Arquivo de saída não encontrado: {arquivo_saida}")
         raise FileNotFoundError(f"Arquivo {arquivo_saida} não encontrado")
     
     df = pd.read_csv(arquivo_saida)
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Dados carregados: {len(df)} linhas")
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Colunas: {df.columns.tolist()}")
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Algoritmos únicos: {df['Algoritmo'].unique().tolist()}")
     
     if experimento == 1:
         x_col, x_label = 'Num_Itens', 'Quantidade de Itens'
@@ -38,13 +42,16 @@ def plotar_graficos(experimento):
 
     plt.figure(figsize=(12, 6))
     
-    cores = {'Programação Dinâmica': '#1f77b4', 'Backtracking': "#ffb30e", 'Branch and Bound': "#df08b0"}
+    cores = {'DP': '#1f77b4', 'BT': "#ffb30e", 'BB': "#df08b0"}
     
     for algoritmo, cor in cores.items():
         df_algo = df[df['Algoritmo'] == algoritmo]
         print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Plotando algoritmo={algoritmo} com {len(df_algo)} pontos")
-        plt.scatter(df_algo[x_col], df_algo['Tempo_Exec(s)'], 
-                   label=algoritmo, alpha=0.6, s=50, color=cor)
+        if len(df_algo) > 0:
+            plt.scatter(df_algo[x_col], df_algo['Tempo_Exec(s)'], 
+                       label=algoritmo, alpha=0.6, s=50, color=cor)
+        else:
+            print(f"{COLOR_WARN}[WARN]{Style.RESET_ALL} Nenhum dado encontrado para algoritmo={algoritmo}")
     
     plt.xlabel(x_label, fontsize=12)
     plt.ylabel('Tempo de Execução (s)', fontsize=12)
@@ -52,7 +59,7 @@ def plotar_graficos(experimento):
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.show()
-    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Finalizado plotar_graficos: experimento={experimento}")
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Finalizado plotar_grafico_dispersao: experimento={experimento}")
 
 def combina_csv(arquivo_saida, arquivos_para_combinar):
     diretorio = os.path.dirname(arquivo_saida)
@@ -70,8 +77,23 @@ def combina_csv(arquivo_saida, arquivos_para_combinar):
         for arquivo in arquivos_para_combinar:
             if not os.path.exists(arquivo):
                 print(f"{COLOR_WARN}[WARN]{Style.RESET_ALL} Arquivo não encontrado para combinar: {arquivo}")
-            else:
-                print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Arquivo pronto para combinar: {arquivo}")
+                continue
+            
+            with open(arquivo, 'r') as csvfile_in:
+                print(f"\t{COLOR_INFO}[INFO]{Style.RESET_ALL} Arquivo pronto para combinar: {arquivo}")
+                reader = csv.reader(csvfile_in)
+                next(reader)  # Pula o cabeçalho
+                
+                algoritmo = ''
+                if 'dp' in arquivo:
+                    algoritmo = 'DP'
+                elif 'bb' in arquivo:
+                    algoritmo = 'BB'
+                elif 'bt' in arquivo:
+                    algoritmo = 'BT'
+                
+                for row in reader:
+                    writer.writerow([algoritmo] + row)
 
 def combina_resultados(experimento):
     arquivos_para_combinar = []
@@ -96,6 +118,6 @@ def combina_resultados(experimento):
 
 if __name__ == "__main__":
     try:
-        plotar_graficos(1)
+        plotar_grafico_dispersao(1)
     except Exception as e:
         print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} {e}")

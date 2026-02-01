@@ -1,6 +1,7 @@
 import os
 import consts as c
 import pandas as pd
+import matplotlib.pyplot as plt
 import csv
 
 def read_instance(instance_path):
@@ -36,4 +37,3 @@ def salvar_resultado(arquivo_saida, num_itens, W, V, lucro, tempo, itens_escolhi
             writer.writerow(['Num_Itens', 'Cap_Peso', 'Cap_Volume', 'Lucro_Max', 'Tempo_Exec(s)', 'Itens_Ids'])
         
         writer.writerow([num_itens, W, V, lucro, tempo, str(itens_escolhidos)])
-    

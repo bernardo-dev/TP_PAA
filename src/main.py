@@ -38,12 +38,12 @@ def run_experiment(experiment_number):
             W, V, n = get_experiment_data(experiment_number, combination)
             print(f"Processando instância {instance} - Combinação {combination}: W={W}, V={V}, n={n}")
 
-            dynamic_programming_experiment(experiment_number, combination, instance)
-            branch_and_bound_experiment(experiment_number, combination, instance)
+            # dynamic_programming_experiment(experiment_number, combination, instance)
+            # branch_and_bound_experiment(experiment_number, combination, instance)
             backtracking_experiment(experiment_number, combination, instance)
    
 
 if __name__ == "__main__":
-    run_experiment(1)
+    #run_experiment(1)
     run_experiment(2)
     run_experiment(3) 

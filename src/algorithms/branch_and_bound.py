@@ -32,17 +32,17 @@ def execute(instance, exp_number):
 
     return solution
 
-def calcular_bound(nivel, lucro, peso, volume, items, W, V):
+def calcular_bound(nivel, lucro, peso, volume, items, W, V, sorted_w, sorted_v):
     if peso > W or volume > V:
         return -float('inf')
-
-    remaining = items[nivel:]
 
     # Bound for weight only
     bound_w = 0
     peso_rest = W - peso
-    sorted_w = sorted(remaining, key=lambda x: x[2]/x[0] if x[0] > 0 else 0, reverse=True)
-    for w_i, _, val_i in sorted_w:
+    for i in sorted_w:
+        if i < nivel:
+            continue
+        w_i, _, val_i = items[i]
         if w_i <= peso_rest:
             bound_w += val_i
             peso_rest -= w_i
@@ -53,8 +53,10 @@ def calcular_bound(nivel, lucro, peso, volume, items, W, V):
     # Bound for volume only
     bound_v = 0
     vol_rest = V - volume
-    sorted_v = sorted(remaining, key=lambda x: x[2]/x[1] if x[1] > 0 else 0, reverse=True)
-    for _, vol_i, val_i in sorted_v:
+    for i in sorted_v:
+        if i < nivel:
+            continue
+        _, vol_i, val_i = items[i]
         if vol_i <= vol_rest:
             bound_v += val_i
             vol_rest -= vol_i
@@ -90,8 +92,11 @@ def greedy_solution(items, W, V):
 def branch_and_bound(W, V, items):
     melhor_lucro, melhor_solucao = greedy_solution(items, W, V)
 
+    sorted_w = sorted(range(len(items)), key=lambda i: items[i][2]/items[i][0] if items[i][0] > 0 else 0, reverse=True)
+    sorted_v = sorted(range(len(items)), key=lambda i: items[i][2]/items[i][1] if items[i][1] > 0 else 0, reverse=True)
+
     heap = []
-    bound_raiz = calcular_bound(0, 0, 0, 0, items, W, V)
+    bound_raiz = calcular_bound(0, 0, 0, 0, items, W, V, sorted_w, sorted_v)
     heapq.heappush(heap, (-bound_raiz, 0, 0, 0, 0, []))
 
     while heap:
@@ -120,12 +125,12 @@ def branch_and_bound(W, V, items):
                 melhor_lucro = novo_lucro
                 melhor_solucao = nova_solucao[:]
 
-            bound_com = calcular_bound(nivel + 1, novo_lucro, novo_peso, novo_volume, items, W, V)
+            bound_com = calcular_bound(nivel + 1, novo_lucro, novo_peso, novo_volume, items, W, V, sorted_w, sorted_v)
             if bound_com > melhor_lucro:
                 heapq.heappush(heap, (-bound_com, nivel + 1, novo_lucro, novo_peso, novo_volume, nova_solucao))
 
         # Não incluir item
-        bound_sem = calcular_bound(nivel + 1, lucro, peso, volume, items, W, V)
+        bound_sem = calcular_bound(nivel + 1, lucro, peso, volume, items, W, V, sorted_w, sorted_v)
         if bound_sem > melhor_lucro:
             heapq.heappush(heap, (-bound_sem, nivel + 1, lucro, peso, volume, selecionados[:]))
 

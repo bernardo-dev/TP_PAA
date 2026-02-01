@@ -26,9 +26,6 @@ def plotar_grafico_dispersao(experimento):
         raise FileNotFoundError(f"Arquivo {arquivo_saida} não encontrado")
     
     df = pd.read_csv(arquivo_saida)
-    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Dados carregados: {len(df)} linhas")
-    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Colunas: {df.columns.tolist()}")
-    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Algoritmos únicos: {df['Algoritmo'].unique().tolist()}")
     
     if experimento == 1:
         x_col, x_label = 'Num_Itens', 'Quantidade de Itens'
@@ -56,16 +53,74 @@ def plotar_grafico_dispersao(experimento):
     plt.xlabel(x_label, fontsize=12)
     plt.ylabel('Tempo de Execução (s)', fontsize=12)
     plt.title(f'Experimento {experimento}: {x_label} vs Tempo de Execução')
+    plt.legend(title='Algoritmo')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.show()
     print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Finalizado plotar_grafico_dispersao: experimento={experimento}")
 
+def plotar_grafico_boxplot(experimento):
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Iniciando plotar_grafico_boxplot: experimento={experimento}")
+
+    arquivo_saida = combina_resultados(experimento)
+    print(f"\t{COLOR_INFO}[INFO]{Style.RESET_ALL} Arquivo combinado para plotagem: {arquivo_saida}")
+
+    if not os.path.exists(arquivo_saida):
+        print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} Arquivo de saída não encontrado: {arquivo_saida}")
+        raise FileNotFoundError(f"Arquivo {arquivo_saida} não encontrado")
+    
+    df = pd.read_csv(arquivo_saida)
+    
+    if experimento == 1:
+        x_label = 'Quantidade de Itens'
+    elif experimento == 2:
+        x_label = 'Peso da Mochila'
+    elif experimento == 3:
+        x_label = 'Volume da Mochila'
+    else:
+        print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} Experimento inválido: {experimento}")
+        raise ValueError("Experimento deve ser 1, 2 ou 3")
+
+    plt.figure(figsize=(10, 6))
+    
+    # Preparar dados para o boxplot
+    algoritmos = ['DP', 'BT', 'BB']
+    cores = ['#1f77b4', '#ffb30e', '#df08b0']
+    dados_boxplot = []
+    labels = []
+    
+    for algoritmo in algoritmos:
+        df_algo = df[df['Algoritmo'] == algoritmo]
+        print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Algoritmo={algoritmo} com {len(df_algo)} dados")
+        if len(df_algo) > 0:
+            dados_boxplot.append(df_algo['Tempo_Exec(s)'].values)
+            labels.append(algoritmo)
+        else:
+            print(f"{COLOR_WARN}[WARN]{Style.RESET_ALL} Nenhum dado encontrado para algoritmo={algoritmo}")
+    
+    if dados_boxplot:
+        bp = plt.boxplot(dados_boxplot, labels=labels, patch_artist=True, widths=0.6)
+        
+        # Colorir cada boxplot
+        for patch, cor in zip(bp['boxes'], cores[:len(labels)]):
+            patch.set_facecolor(cor)
+            patch.set_alpha(0.6)
+        
+        plt.xlabel('Algoritmo', fontsize=12)
+        plt.ylabel('Tempo de Execução (s)', fontsize=12)
+        plt.title(f'Experimento {experimento}: Distribuição do Tempo de Execução por Algoritmo')
+        plt.grid(True, alpha=0.3, axis='y')
+        plt.tight_layout()
+        plt.show()
+    else:
+        print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} Nenhum dado disponível para plotar boxplot")
+    
+    print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Finalizado plotar_grafico_boxplot: experimento={experimento}")
+
 def combina_csv(arquivo_saida, arquivos_para_combinar):
     diretorio = os.path.dirname(arquivo_saida)
     if diretorio and not os.path.exists(diretorio):
         os.makedirs(diretorio)
-        print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Diretório criado: {diretorio}")
 
     with open(arquivo_saida, 'w', newline='') as csvfile_out:
         writer = csv.writer(csvfile_out)
@@ -104,7 +159,6 @@ def combina_resultados(experimento):
         dir_exp = algo + f'{experimento}/'
 
         if os.path.exists(dir_exp):
-            print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Diretório encontrado: {dir_exp}")
             for arquivo in os.listdir(dir_exp):
                 if arquivo.endswith('.csv'):
                     arquivos_para_combinar.append(os.path.join(dir_exp, arquivo))
@@ -118,6 +172,6 @@ def combina_resultados(experimento):
 
 if __name__ == "__main__":
     try:
-        plotar_grafico_dispersao(1)
+        plotar_grafico_boxplot(1)
     except Exception as e:
         print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} {e}")

@@ -56,7 +56,8 @@ def plotar_grafico_dispersao(experimento):
     plt.legend(title='Algoritmo')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
+    plt.savefig(f"graficos/experimento_{experimento}_dispersao.png")
     print(f"{COLOR_INFO}[INFO]{Style.RESET_ALL} Finalizado plotar_grafico_dispersao: experimento={experimento}")
 
 def plotar_grafico_boxplot(experimento):
@@ -111,7 +112,8 @@ def plotar_grafico_boxplot(experimento):
         plt.title(f'Experimento {experimento}: Distribuição do Tempo de Execução por Algoritmo')
         plt.grid(True, alpha=0.3, axis='y')
         plt.tight_layout()
-        plt.show()
+        # plt.show()
+        plt.savefig(f"graficos/experimento_{experimento}_boxplot.png")
     else:
         print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} Nenhum dado disponível para plotar boxplot")
     
@@ -172,6 +174,7 @@ def combina_resultados(experimento):
 
 if __name__ == "__main__":
     try:
-        plotar_grafico_boxplot(1)
+        plotar_grafico_boxplot(3)
+        plotar_grafico_dispersao(3)
     except Exception as e:
         print(f"{COLOR_ERROR}[ERROR]{Style.RESET_ALL} {e}")

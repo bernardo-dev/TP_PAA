@@ -33,17 +33,21 @@ def run_experiment(experiment_number):
     print("-----------------------------------")
 
 
-    for combination in range(1, 4):
+    for combination in range(1, 11):
         for instance in range(1, 11):
             W, V, n = get_experiment_data(experiment_number, combination)
             print(f"Processando instância {instance} - Combinação {combination}: W={W}, V={V}, n={n}")
 
-            # dynamic_programming_experiment(experiment_number, combination, instance)
-            # branch_and_bound_experiment(experiment_number, combination, instance)
-            backtracking_experiment(experiment_number, combination, instance)
+            dynamic_programming_experiment(experiment_number, combination, instance)
+            branch_and_bound_experiment(experiment_number, combination, instance)
+            if (experiment_number == 1 and combination == 3) or experiment_number == 4:
+                pass
+            else:
+                backtracking_experiment(experiment_number, combination, instance)
    
 
 if __name__ == "__main__":
-    #run_experiment(1)
-    run_experiment(2)
-    run_experiment(3) 
+    # run_experiment(1)
+    # run_experiment(2)
+    # run_experiment(3)
+    run_experiment(4)
